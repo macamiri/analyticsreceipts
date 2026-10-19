@@ -1,0 +1,3 @@
+61e022183498fbb77ef49331277e8bdeb8b5d2cf2eaa3ffe12388bd4a34829fb  fixtures/transcripts-v1.json
+fa54230acf3d9b9b949801cbedfcfff6eaaa3a3d05e564848f6b013b6b991370  fixtures/expected-grades-v1.json
+345dd5cd00485668f9f3bcdd2baf2515db0af452ecf07b968a75a62d1b404719  golden/expected-v1.json

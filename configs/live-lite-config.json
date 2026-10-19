@@ -1,0 +1,30 @@
+{
+ "label": "LIVE-LITE",
+ "ruling": "fixed-priority queue under hard time caps; whatever completes is the result; order fixed before the run; runs on battery (recorded condition)",
+ "items": [
+  "G01",
+  "G11",
+  "G16",
+  "G19",
+  "G12",
+  "G04",
+  "G17",
+  "G20"
+ ],
+ "arms": [
+  "mcp",
+  "raw"
+ ],
+ "k": 1,
+ "model": "qwen3:4b",
+ "think": true,
+ "num_ctx": 16384,
+ "max_turns": 6,
+ "request_timeout_s": 1200,
+ "loop_cap_s": 2700,
+ "soft_cap_s": 21600,
+ "hard_cap_s": 25200,
+ "disk_floor_kib": 1048576,
+ "battery_floor_pct": 10,
+ "seed": 1
+}

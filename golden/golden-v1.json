@@ -1,0 +1,243 @@
+{
+  "golden_set_version": "1",
+  "status": "INTENT-FROZEN: written before any semantic model exists. expected_result is materialised later from the pinned snapshot, never typed by hand.",
+  "dataset": {
+    "name": "Online Retail II",
+    "source": "UCI Machine Learning Repository, dataset 502, https://archive.ics.uci.edu/dataset/502/online+retail+ii",
+    "license": "CC BY 4.0",
+    "doi": "10.24432/C5CG6D",
+    "xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980"
+  },
+  "authorship": {
+    "gold_author": "project author",
+    "gold_reviewer": null,
+    "review_note": "Reviewed by one human who is not the author but who approved the project plan, so reviewer independence is partial. Disclosed in the README."
+  },
+  "conventions": {
+    "C1_data_basis": "Both yearly sheets are loaded as delivered. Their identical window 2010-12-01 to 2010-12-09 is counted once. The warehouse keeps both sheets as loaded; de-duplication is a definition rule, not a load-time fix.",
+    "C2_product_line": "A product line is a line whose stock code, after trimming spaces, is five digits optionally followed by up to two letters. Every other code is non-product: postage (POST, DOT, C2), fees (AMAZONFEE, BANK CHARGES), manual entries (M, m), discounts (D), bad-debt adjustments (B), samples (S), charity (CRUK), adjustments (ADJUST, ADJUST2), tests (TEST001, TEST002), gift vouchers (gift_0001_*), PADS, DCGS* and the remaining short codes.",
+    "C3_revenue": "Revenue means net product revenue: the sum of quantity times price over product lines, including cancellation lines (which carry negative quantities), excluding non-product lines.",
+    "C4_order": "An order is a distinct invoice that does not start with C (cancellation) or A (bad-debt adjustment) and has at least one product line.",
+    "C5_customer": "A customer is a distinct customer ID. Lines without a customer ID are never counted as a customer. Revenue per customer uses only revenue on lines that carry a customer ID.",
+    "C6_cancellation": "A cancellation is an invoice starting with C. Cancelled units are minus the sum of quantity on product lines of cancellation invoices.",
+    "C7_periods": "Periods are inclusive calendar dates on the invoice timestamp as recorded. The data ends 2011-12-09 12:50, so any period after that date is incomplete and must be flagged as such.",
+    "C8_duplicates_within_sheet": "Identical lines within one sheet are kept. The source has no line identifier, so a repeat purchase cannot be told apart from a duplicate."
+  },
+  "metrics_intent": {
+    "net_product_revenue": "C3. The default meaning of revenue, sales or turnover.",
+    "units_sold": "Sum of quantity on product lines of orders (C4).",
+    "cancelled_units": "C6.",
+    "orders": "Count of orders (C4).",
+    "active_customers": "Distinct customer IDs with at least one order (C4, C5).",
+    "revenue_per_customer": "net_product_revenue on lines with a customer ID, divided by active_customers (C5).",
+    "cancellation_rate": "Distinct cancellation invoices divided by distinct invoices that start with a digit or C (A excluded). A ratio: never summed across groups."
+  },
+  "spec_fields": "resolved_spec = {metric, filters[{dim, op, value}], period{start, end, incomplete}, comparison, grain, dimensions, ranking}. op is one of eq, ne, in, is_null. comparison is null or {period{start, end}}. ranking is null or {by, direction, limit}.",
+  "items": [
+    {
+      "id": "G01",
+      "question": "What was revenue in the United Kingdom in November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue for UK invoices dated in November 2011.",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [{"dim": "country", "op": "eq", "value": "United Kingdom"}], "period": {"start": "2011-11-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["revenue", "country-filter", "single-month"]
+    },
+    {
+      "id": "G02",
+      "question": "Show monthly revenue for the first half of 2011.",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue per calendar month, January to June 2011.",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [], "period": {"start": "2011-01-01", "end": "2011-06-30", "incomplete": false}, "comparison": null, "grain": "month", "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["revenue", "time-grain"]
+    },
+    {
+      "id": "G03",
+      "question": "Which five countries outside the UK brought in the most revenue between January and November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue by country, UK excluded, top five descending, 2011-01-01 to 2011-11-30.",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [{"dim": "country", "op": "ne", "value": "United Kingdom"}], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": ["country"], "ranking": {"by": "net_product_revenue", "direction": "desc", "limit": 5}},
+      "trap": null,
+      "slice_tags": ["revenue", "ranking", "negated-filter"]
+    },
+    {
+      "id": "G04",
+      "question": "How many customers in Germany placed an order between January and November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Distinct customer IDs with at least one order from Germany in the period.",
+      "resolved_spec": {"metric": "active_customers", "filters": [{"dim": "country", "op": "eq", "value": "Germany"}], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["customers", "country-filter"]
+    },
+    {
+      "id": "G05",
+      "question": "How many units of stock code 85123A did we sell between January and November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Units sold on orders for stock code 85123A in the period.",
+      "resolved_spec": {"metric": "units_sold", "filters": [{"dim": "stock_code", "op": "eq", "value": "85123A"}], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["units", "product-filter"]
+    },
+    {
+      "id": "G06",
+      "question": "What was the cancellation rate in the first quarter of 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Share of invoices in Q1 2011 that are cancellations (ratio, computed from components).",
+      "resolved_spec": {"metric": "cancellation_rate", "filters": [], "period": {"start": "2011-01-01", "end": "2011-03-31", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["ratio", "cancellations"]
+    },
+    {
+      "id": "G07",
+      "question": "How many orders did customers in the Netherlands place in each quarter from January to September 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Orders from the Netherlands per calendar quarter, Q1 to Q3 2011.",
+      "resolved_spec": {"metric": "orders", "filters": [{"dim": "country", "op": "eq", "value": "Netherlands"}], "period": {"start": "2011-01-01", "end": "2011-09-30", "incomplete": false}, "comparison": null, "grain": "quarter", "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["orders", "time-grain", "country-filter"]
+    },
+    {
+      "id": "G08",
+      "question": "How many units were cancelled between January and November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Cancelled units (a positive number) on product lines of cancellation invoices in the period.",
+      "resolved_spec": {"metric": "cancelled_units", "filters": [], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["units", "cancellations", "sign-convention"]
+    },
+    {
+      "id": "G09",
+      "question": "How did UK revenue in October 2011 compare with October 2010?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue for the UK, October 2011 versus October 2010, both periods complete.",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [{"dim": "country", "op": "eq", "value": "United Kingdom"}], "period": {"start": "2011-10-01", "end": "2011-10-31", "incomplete": false}, "comparison": {"period": {"start": "2010-10-01", "end": "2010-10-31"}}, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["revenue", "comparison", "year-over-year"]
+    },
+    {
+      "id": "G10",
+      "question": "How much revenue came from lines with no customer ID between January and November 2011?",
+      "intent_class": "answerable",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue on lines where the customer ID is missing, in the period.",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [{"dim": "customer_id", "op": "is_null", "value": null}], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": null,
+      "slice_tags": ["revenue", "null-filter"]
+    },
+    {
+      "id": "G11",
+      "question": "What was total revenue in December 2010?",
+      "intent_class": "trap",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue for December 2010, with 2010-12-01 to 2010-12-09 counted once (C1).",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [], "period": {"start": "2010-12-01", "end": "2010-12-31", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": {"name": "sheet-overlap", "naive_reading": "Summing every loaded line counts the 2010-12-01 to 2010-12-09 window twice, because both yearly sheets contain it."},
+      "slice_tags": ["revenue", "overlap-window"]
+    },
+    {
+      "id": "G12",
+      "question": "What was total revenue between January and November 2011?",
+      "intent_class": "trap",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue, 2011-01-01 to 2011-11-30, non-product lines excluded (C2, C3).",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": {"name": "non-product-rows", "naive_reading": "Summing quantity times price over all lines includes postage, marketplace fees, bank charges, manual entries and bad-debt adjustments."},
+      "slice_tags": ["revenue", "non-product"]
+    },
+    {
+      "id": "G13",
+      "question": "How many orders were placed between January and November 2011?",
+      "intent_class": "trap",
+      "expected_behavior": "answer",
+      "business_reading": "Count of orders (C4): cancellation and bad-debt invoices are not orders.",
+      "resolved_spec": {"metric": "orders", "filters": [], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": {"name": "cancellation-invoices-as-orders", "naive_reading": "Counting distinct invoice numbers includes cancellation (C) and bad-debt (A) invoices."},
+      "slice_tags": ["orders", "cancellations"]
+    },
+    {
+      "id": "G14",
+      "question": "What was the average revenue per customer in the UK between January and November 2011?",
+      "intent_class": "trap",
+      "expected_behavior": "answer",
+      "business_reading": "Net product revenue on UK lines that carry a customer ID, divided by UK active customers (C5).",
+      "resolved_spec": {"metric": "revenue_per_customer", "filters": [{"dim": "country", "op": "eq", "value": "United Kingdom"}], "period": {"start": "2011-01-01", "end": "2011-11-30", "incomplete": false}, "comparison": null, "grain": null, "dimensions": [], "ranking": null},
+      "trap": {"name": "unattributed-revenue-in-numerator", "naive_reading": "Dividing all revenue by the number of distinct customers puts revenue from lines without a customer ID into the numerator only."},
+      "slice_tags": ["ratio", "customers", "null-customer"]
+    },
+    {
+      "id": "G15",
+      "question": "How did revenue in December 2011 compare with November 2011?",
+      "intent_class": "trap",
+      "expected_behavior": "answer_with_caveat",
+      "business_reading": "Net product revenue, December 2011 versus November 2011, with December flagged incomplete because the data ends 2011-12-09 12:50 (C7).",
+      "resolved_spec": {"metric": "net_product_revenue", "filters": [], "period": {"start": "2011-12-01", "end": "2011-12-31", "incomplete": true}, "comparison": {"period": {"start": "2011-11-01", "end": "2011-11-30"}}, "grain": null, "dimensions": [], "ranking": null},
+      "trap": {"name": "incomplete-month", "naive_reading": "Comparing the two month totals reads nine days of December as a full month and reports a collapse."},
+      "slice_tags": ["revenue", "comparison", "incomplete-period"]
+    },
+    {
+      "id": "G16",
+      "question": "How did we do last quarter?",
+      "intent_class": "ambiguous",
+      "expected_behavior": "clarify",
+      "business_reading": "No metric is named, and last quarter has no anchor: Q3 2011 is the last complete quarter, Q4 2011 is partial.",
+      "resolved_spec": null,
+      "clarification_targets": ["metric", "period"],
+      "trap": null,
+      "slice_tags": ["ambiguous", "no-metric", "relative-date"]
+    },
+    {
+      "id": "G17",
+      "question": "Who are our biggest customers?",
+      "intent_class": "ambiguous",
+      "expected_behavior": "clarify",
+      "business_reading": "Biggest by revenue, orders or units is not stated, and no period is given.",
+      "resolved_spec": null,
+      "clarification_targets": ["metric", "period"],
+      "trap": null,
+      "slice_tags": ["ambiguous", "ranking"]
+    },
+    {
+      "id": "G18",
+      "question": "What is our return rate?",
+      "intent_class": "ambiguous",
+      "expected_behavior": "clarify",
+      "business_reading": "Could mean cancelled invoices over invoices (cancellation_rate), cancelled units over units sold, or cancelled value over revenue; no period is given.",
+      "resolved_spec": null,
+      "clarification_targets": ["metric", "period"],
+      "trap": null,
+      "slice_tags": ["ambiguous", "ratio"]
+    },
+    {
+      "id": "G19",
+      "question": "What was our profit margin in 2011?",
+      "intent_class": "unanswerable",
+      "expected_behavior": "abstain",
+      "business_reading": "The data has prices and quantities but no costs, so margin cannot be computed.",
+      "resolved_spec": null,
+      "abstain_reason": "no cost data",
+      "trap": null,
+      "slice_tags": ["unanswerable", "missing-data"]
+    },
+    {
+      "id": "G20",
+      "question": "How many people visited the website in November 2011?",
+      "intent_class": "unanswerable",
+      "expected_behavior": "abstain",
+      "business_reading": "The data holds invoices only, with no web traffic.",
+      "resolved_spec": null,
+      "abstain_reason": "no traffic data",
+      "trap": null,
+      "slice_tags": ["unanswerable", "missing-data"]
+    }
+  ]
+}

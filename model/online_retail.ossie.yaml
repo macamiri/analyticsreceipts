@@ -1,0 +1,128 @@
+version: 0.2.0.dev0
+name: online_retail
+description: >-
+  UK online retailer, invoice lines 2009-12-01 to 2011-12-09 (UCI Online Retail II, dataset 502, CC BY 4.0).
+  Governed metrics for the analyticsreceipts eval. Expressions are ANSI SQL as executed by DuckDB.
+ai_context:
+  instructions: >-
+    Business conventions. (C1) The two yearly sheets overlap on 2010-12-01 to 2010-12-09; that window is
+    counted once. (C2) A product line has a stock code (spaces trimmed) of five digits optionally followed by
+    up to two letters; postage, fees, manual entries, discounts, bad-debt adjustments, samples, charity,
+    tests, gift vouchers and other short codes are non-product. (C3) Revenue means net product revenue:
+    quantity times price over product lines, including cancellation lines (negative quantities), excluding
+    non-product lines. (C4) An order is an invoice that does not start with C (cancellation) or A (bad-debt
+    adjustment) and has at least one product line. (C5) A customer is a distinct customer ID; lines without
+    one are never a customer, and revenue per customer uses only revenue on lines with a customer ID.
+    (C6) A cancellation is an invoice starting with C; cancelled units are minus the summed quantity on its
+    product lines. (C7) Periods are inclusive calendar dates; the data ends 2011-12-09 12:50, so a period
+    after that date is incomplete and must be said to be. (C8) Identical lines within one sheet are kept.
+datasets:
+  - name: lines
+    source: >-
+      SELECT * FROM raw_lines
+      WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')
+    primary_key: [source_sheet, row_in_sheet]
+    description: One row per invoice line, with the duplicated 2010-12-01..09 window counted once (C1).
+    fields:
+      - name: invoice
+        expression: {dialects: [{dialect: ANSI_SQL, expression: invoice}]}
+        datatype: String
+      - name: stock_code
+        expression: {dialects: [{dialect: ANSI_SQL, expression: trim(stock_code)}]}
+        datatype: String
+        dimension: {is_time: false}
+        ai_context: {synonyms: [product code, SKU, item]}
+      - name: quantity
+        expression: {dialects: [{dialect: ANSI_SQL, expression: quantity}]}
+        datatype: Integer
+      - name: price
+        expression: {dialects: [{dialect: ANSI_SQL, expression: price}]}
+        datatype: Decimal
+      - name: line_value
+        expression: {dialects: [{dialect: ANSI_SQL, expression: quantity * price}]}
+        datatype: Decimal
+      - name: customer_id
+        expression: {dialects: [{dialect: ANSI_SQL, expression: customer_id}]}
+        datatype: String
+        dimension: {is_time: false}
+        description: Missing on about 22.5 % of lines; filter with is_null to select those lines.
+      - name: country
+        expression: {dialects: [{dialect: ANSI_SQL, expression: country}]}
+        datatype: String
+        dimension: {is_time: false}
+        ai_context: {synonyms: [market, region]}
+      - name: invoice_date
+        expression: {dialects: [{dialect: ANSI_SQL, expression: CAST(invoice_ts AS DATE)}]}
+        datatype: Date
+        dimension: {is_time: true}
+      - name: is_cancellation
+        expression: {dialects: [{dialect: ANSI_SQL, expression: "invoice LIKE 'C%'"}]}
+        datatype: Boolean
+      - name: is_bad_debt
+        expression: {dialects: [{dialect: ANSI_SQL, expression: "invoice LIKE 'A%'"}]}
+        datatype: Boolean
+      - name: is_product
+        expression: {dialects: [{dialect: ANSI_SQL, expression: "trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}'"}]}
+        datatype: Boolean
+      - name: is_order_line
+        expression: {dialects: [{dialect: ANSI_SQL, expression: "invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}'"}]}
+        datatype: Boolean
+metrics:
+  - name: net_product_revenue
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "SUM(CASE WHEN lines.is_product THEN lines.line_value END)"}]}
+    description: Net product revenue in GBP (C2, C3). The default meaning of revenue, sales or turnover.
+    datatype: Decimal
+    ai_context:
+      synonyms: [revenue, sales, turnover, net revenue]
+      instructions: Use for revenue unless the question says otherwise. Excludes postage, fees and adjustments.
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"simple","version":"1.0.0","unit":"GBP","non_additive":false,"conventions":["C1","C2","C3"],"status":"approved"}'
+  - name: units_sold
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "SUM(CASE WHEN lines.is_order_line THEN lines.quantity END)"}]}
+    description: Units sold on product lines of orders (C4).
+    datatype: Integer
+    ai_context: {synonyms: [units, quantity sold, items sold]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"simple","version":"1.0.0","unit":"units","non_additive":false,"conventions":["C1","C2","C4"],"status":"approved"}'
+  - name: cancelled_units
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "-SUM(CASE WHEN lines.is_cancellation AND lines.is_product THEN lines.quantity END)"}]}
+    description: Units on product lines of cancellation invoices, reported as a positive number (C6).
+    datatype: Integer
+    ai_context: {synonyms: [returned units, cancelled quantity]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"simple","version":"1.0.0","unit":"units","non_additive":false,"conventions":["C1","C2","C6"],"status":"approved"}'
+  - name: orders
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "COUNT(DISTINCT CASE WHEN lines.is_order_line THEN lines.invoice END)"}]}
+    description: Count of orders (C4). Cancellation and bad-debt invoices are not orders.
+    datatype: Integer
+    ai_context: {synonyms: [order count, number of orders, purchases]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"count_distinct","version":"1.0.0","unit":"orders","non_additive":true,"conventions":["C1","C2","C4"],"status":"approved"}'
+  - name: active_customers
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "COUNT(DISTINCT CASE WHEN lines.is_order_line AND lines.customer_id IS NOT NULL THEN lines.customer_id END)"}]}
+    description: Distinct customer IDs with at least one order (C4, C5).
+    datatype: Integer
+    ai_context: {synonyms: [customers, buyers, number of customers]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"count_distinct","version":"1.0.0","unit":"customers","non_additive":true,"conventions":["C1","C2","C4","C5"],"status":"approved"}'
+  - name: revenue_per_customer
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "SUM(CASE WHEN lines.is_product AND lines.customer_id IS NOT NULL THEN lines.line_value END) / NULLIF(COUNT(DISTINCT CASE WHEN lines.is_order_line AND lines.customer_id IS NOT NULL THEN lines.customer_id END), 0)"}]}
+    description: Net product revenue on lines with a customer ID divided by active customers (C5). A ratio.
+    datatype: Decimal
+    ai_context: {synonyms: [average revenue per customer, revenue per buyer, ARPC]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"ratio","version":"1.0.0","unit":"GBP per customer","non_additive":true,"conventions":["C1","C2","C3","C5"],"status":"approved"}'
+  - name: cancellation_rate
+    expression: {dialects: [{dialect: ANSI_SQL, expression: "COUNT(DISTINCT CASE WHEN lines.is_cancellation THEN lines.invoice END) * 1.0 / NULLIF(COUNT(DISTINCT CASE WHEN NOT lines.is_bad_debt THEN lines.invoice END), 0)"}]}
+    description: Cancellation invoices divided by invoices starting with a digit or C (A excluded). A ratio between 0 and 1.
+    datatype: Decimal
+    ai_context: {synonyms: [cancel rate, share of invoices cancelled]}
+    custom_extensions:
+      - vendor_name: analyticsreceipts
+        data: '{"type":"ratio","version":"1.0.0","unit":"ratio","non_additive":true,"conventions":["C1","C6"],"status":"approved"}'

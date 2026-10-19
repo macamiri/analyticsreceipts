@@ -1,0 +1,264 @@
+{
+ "sha256": "ede0766ce944f021ad60b3efcb6595b65d2acf43c5a5d863a9d97b7bf0065f0a",
+ "tools": [
+  {
+   "description": "Distinct values of one dimension (at most 100), to ground filter values.",
+   "input_schema": {
+    "properties": {
+     "dimension": {
+      "title": "Dimension",
+      "type": "string"
+     },
+     "limit": {
+      "default": 50,
+      "title": "Limit",
+      "type": "integer"
+     },
+     "search": {
+      "anyOf": [
+       {
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Search"
+     }
+    },
+    "required": [
+     "dimension"
+    ],
+    "title": "get_dimension_valuesArguments",
+    "type": "object"
+   },
+   "name": "get_dimension_values"
+  },
+  {
+   "description": "Full definition of one governed metric, including the business conventions it applies.",
+   "input_schema": {
+    "properties": {
+     "metric": {
+      "title": "Metric",
+      "type": "string"
+     }
+    },
+    "required": [
+     "metric"
+    ],
+    "title": "get_metricArguments",
+    "type": "object"
+   },
+   "name": "get_metric"
+  },
+  {
+   "description": "Dimensions you can filter or group by, and the time grains available.",
+   "input_schema": {
+    "properties": {},
+    "title": "list_dimensionsArguments",
+    "type": "object"
+   },
+   "name": "list_dimensions"
+  },
+  {
+   "description": "List the governed metrics: name, description, synonyms, type and version.",
+   "input_schema": {
+    "properties": {},
+    "title": "list_metricsArguments",
+    "type": "object"
+   },
+   "name": "list_metrics"
+  },
+  {
+   "description": "Compute one governed metric for an inclusive date range, optionally filtered, grouped by dimensions or a time grain, ranked, or compared with a second date range. Returns rows and a receipt. If the question cannot be answered with a governed metric, the result_type says so instead of returning rows.",
+   "input_schema": {
+    "$defs": {
+     "DateRange": {
+      "additionalProperties": false,
+      "properties": {
+       "end": {
+        "description": "Inclusive end date, YYYY-MM-DD",
+        "title": "End",
+        "type": "string"
+       },
+       "start": {
+        "description": "Inclusive start date, YYYY-MM-DD",
+        "title": "Start",
+        "type": "string"
+       }
+      },
+      "required": [
+       "start",
+       "end"
+      ],
+      "title": "DateRange",
+      "type": "object"
+     },
+     "Filter": {
+      "additionalProperties": false,
+      "properties": {
+       "dim": {
+        "title": "Dim",
+        "type": "string"
+       },
+       "op": {
+        "enum": [
+         "eq",
+         "ne",
+         "in",
+         "is_null",
+         "not_null"
+        ],
+        "title": "Op",
+        "type": "string"
+       },
+       "value": {
+        "anyOf": [
+         {
+          "type": "string"
+         },
+         {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         {
+          "type": "null"
+         }
+        ],
+        "default": null,
+        "title": "Value"
+       }
+      },
+      "required": [
+       "dim",
+       "op"
+      ],
+      "title": "Filter",
+      "type": "object"
+     },
+     "Ranking": {
+      "additionalProperties": false,
+      "properties": {
+       "direction": {
+        "default": "desc",
+        "enum": [
+         "asc",
+         "desc"
+        ],
+        "title": "Direction",
+        "type": "string"
+       },
+       "limit": {
+        "maximum": 1000,
+        "minimum": 1,
+        "title": "Limit",
+        "type": "integer"
+       }
+      },
+      "required": [
+       "limit"
+      ],
+      "title": "Ranking",
+      "type": "object"
+     }
+    },
+    "properties": {
+     "comparison_range": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/DateRange"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null
+     },
+     "dimensions": {
+      "anyOf": [
+       {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Dimensions"
+     },
+     "filters": {
+      "anyOf": [
+       {
+        "items": {
+         "$ref": "#/$defs/Filter"
+        },
+        "type": "array"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Filters"
+     },
+     "grain": {
+      "anyOf": [
+       {
+        "enum": [
+         "day",
+         "month",
+         "quarter",
+         "year"
+        ],
+        "type": "string"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null,
+      "title": "Grain"
+     },
+     "metric": {
+      "title": "Metric",
+      "type": "string"
+     },
+     "ranking": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/Ranking"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null
+     },
+     "time_range": {
+      "anyOf": [
+       {
+        "$ref": "#/$defs/DateRange"
+       },
+       {
+        "type": "null"
+       }
+      ],
+      "default": null
+     }
+    },
+    "required": [
+     "metric"
+    ],
+    "title": "query_metricArguments",
+    "type": "object"
+   },
+   "name": "query_metric"
+  }
+ ]
+}

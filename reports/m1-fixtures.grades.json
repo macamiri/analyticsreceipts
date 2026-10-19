@@ -1,0 +1,402 @@
+[
+ {
+  "item": "G01",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F01"
+ },
+ {
+  "item": "G12",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": false,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F02"
+ },
+ {
+  "item": "G01",
+  "arm": "mcp",
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "valid_wrong_question",
+  "trap_sprung": null,
+  "reasons": [
+   "metric units_sold != net_product_revenue",
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell",
+   "spec fields differ: metric"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F03"
+ },
+ {
+  "item": "G09",
+  "arm": "mcp",
+  "a": true,
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "valid_wrong_question",
+  "trap_sprung": null,
+  "reasons": [
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell",
+   "spec fields differ: comparison"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F04"
+ },
+ {
+  "item": "G01",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": false,
+  "d": true,
+  "cell": "valid_misreported",
+  "trap_sprung": null,
+  "reasons": [
+   "an asserted number matches no expected cell"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F05"
+ },
+ {
+  "item": "G15",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": false,
+  "cell": "valid_wrong_question",
+  "trap_sprung": true,
+  "reasons": [
+   "spec fields differ: incomplete"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F06"
+ },
+ {
+  "item": "G15",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": false,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F07"
+ },
+ {
+  "item": "G16",
+  "arm": "mcp",
+  "a": "N/A",
+  "b": "N/A",
+  "c": "N/A",
+  "d": true,
+  "cell": "correct_abstain",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": false,
+  "run_id": "F08"
+ },
+ {
+  "item": "G19",
+  "arm": "mcp",
+  "a": "N/A",
+  "b": "N/A",
+  "c": "N/A",
+  "d": true,
+  "cell": "correct_abstain",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": false,
+  "run_id": "F09"
+ },
+ {
+  "item": "G04",
+  "arm": "mcp",
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "false_abstain",
+  "trap_sprung": null,
+  "reasons": [
+   "abstain on an answerable item"
+  ],
+  "contract_error": null,
+  "valid": false,
+  "run_id": "F10"
+ },
+ {
+  "item": "G19",
+  "arm": "mcp",
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "unwarranted_answer",
+  "trap_sprung": null,
+  "reasons": [
+   "answered a question that expects abstain"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F11"
+ },
+ {
+  "item": "G05",
+  "arm": "mcp",
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "no_answer",
+  "trap_sprung": null,
+  "reasons": [
+   "empty final message"
+  ],
+  "contract_error": "empty final message",
+  "valid": false,
+  "run_id": "F12"
+ },
+ {
+  "item": "G06",
+  "arm": "mcp",
+  "a": false,
+  "b": false,
+  "c": false,
+  "d": true,
+  "cell": "invalid_right_intent",
+  "trap_sprung": null,
+  "reasons": [
+   "metric None != cancellation_rate",
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell"
+  ],
+  "contract_error": null,
+  "valid": false,
+  "run_id": "F13"
+ },
+ {
+  "item": "G06",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F14"
+ },
+ {
+  "item": "G07",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F15"
+ },
+ {
+  "item": "G03",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F16"
+ },
+ {
+  "item": "G11",
+  "arm": "raw",
+  "a": "N/A",
+  "b": false,
+  "c": false,
+  "d": true,
+  "cell": "valid_wrong_question",
+  "trap_sprung": true,
+  "reasons": [
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F17"
+ },
+ {
+  "item": "G11",
+  "arm": "raw",
+  "a": "N/A",
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": false,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F18"
+ },
+ {
+  "item": "G13",
+  "arm": "raw",
+  "a": "N/A",
+  "b": false,
+  "c": false,
+  "d": true,
+  "cell": "valid_wrong_question",
+  "trap_sprung": true,
+  "reasons": [
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F19"
+ },
+ {
+  "item": "G14",
+  "arm": "raw",
+  "a": "N/A",
+  "b": false,
+  "c": false,
+  "d": true,
+  "cell": "valid_wrong_question",
+  "trap_sprung": true,
+  "reasons": [
+   "result table does not match the expected table",
+   "an asserted number matches no expected cell"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F20"
+ },
+ {
+  "item": "G02",
+  "arm": "raw",
+  "a": "N/A",
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F21"
+ },
+ {
+  "item": "G03",
+  "arm": "raw",
+  "a": "N/A",
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "no_answer",
+  "trap_sprung": null,
+  "reasons": [
+   "final message is not a contract JSON object"
+  ],
+  "contract_error": "final message is not a contract JSON object",
+  "valid": false,
+  "run_id": "F22"
+ },
+ {
+  "item": "G10",
+  "arm": "raw",
+  "a": "N/A",
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F23"
+ },
+ {
+  "item": "G18",
+  "arm": "raw",
+  "a": "N/A",
+  "b": "N/A",
+  "c": "N/A",
+  "d": true,
+  "cell": "correct_abstain",
+  "trap_sprung": null,
+  "reasons": [],
+  "contract_error": null,
+  "valid": false,
+  "run_id": "F24"
+ },
+ {
+  "item": "G20",
+  "arm": "raw",
+  "a": "N/A",
+  "b": false,
+  "c": false,
+  "d": false,
+  "cell": "unwarranted_answer",
+  "trap_sprung": null,
+  "reasons": [
+   "answered a question that expects abstain"
+  ],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F25"
+ },
+ {
+  "item": "G11",
+  "arm": "mcp",
+  "a": true,
+  "b": true,
+  "c": true,
+  "d": true,
+  "cell": "correct",
+  "trap_sprung": false,
+  "reasons": [],
+  "contract_error": null,
+  "valid": true,
+  "run_id": "F26"
+ }
+]

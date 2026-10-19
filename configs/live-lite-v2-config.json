@@ -1,0 +1,34 @@
+{
+ "label": "LIVE-LITE v2",
+ "ruling": "identical to v1 except ONE system-prompt addition (explicit tool use), applied to both arms; pre-registered",
+ "items": [
+  "G01",
+  "G11",
+  "G16",
+  "G19",
+  "G12",
+  "G04",
+  "G17",
+  "G20"
+ ],
+ "arms": [
+  "mcp",
+  "raw"
+ ],
+ "k": 1,
+ "model": "qwen3:4b",
+ "think": true,
+ "num_ctx": 16384,
+ "max_turns": 6,
+ "request_timeout_s": 1200,
+ "loop_cap_s": 2700,
+ "soft_cap_s": 21600,
+ "hard_cap_s": 25200,
+ "disk_floor_kib": 1048576,
+ "battery_floor_pct": 10,
+ "seed": 1,
+ "system_prompt_addition": {
+  "mcp": "First call list_metrics to see available metrics. Then call query_metric with the metric name exactly as listed. Answer only from query_metric results; if no metric fits, abstain.",
+  "raw": "First call describe_tables to see the available tables and columns. Then call run_sql with a query that uses the column names exactly as listed. Answer only from run_sql results; if the data cannot answer the question, abstain."
+ }
+}

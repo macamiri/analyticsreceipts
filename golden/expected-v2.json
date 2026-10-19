@@ -1,0 +1,354 @@
+{
+ "golden_sha256": "9472869d5b1a4a79460c80ad2ff7eedad63da3a53e704928ebd669d2c77f715a",
+ "items": {
+  "G01": {
+   "columns": [
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "22507f3f57a993105c7df573833c5ea95fc138126bad0a8167619c6cfca1cb1c",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "7557a08caf0bac91bd49730d54ae371a490f5a7836e58df85cb995c23b7bd423",
+   "rows": [
+    [
+     1264300.58
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G02": {
+   "columns": [
+    "period_start",
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "a904cfbf047a013d785470b0626e7b527dd6a81a6f93b15798aa579f96ef8d50",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "f7fd172ffcd823d3f4eb7440f1107d0405445d3bd0e42070d2307af8c4cbb8b7",
+   "rows": [
+    [
+     "2011-01-01",
+     580388.64
+    ],
+    [
+     "2011-02-01",
+     500493.88
+    ],
+    [
+     "2011-03-01",
+     680457.29
+    ],
+    [
+     "2011-04-01",
+     482878.0
+    ],
+    [
+     "2011-05-01",
+     732205.53
+    ],
+    [
+     "2011-06-01",
+     724991.03
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G03": {
+   "columns": [
+    "country",
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "807d9ce26ecf2029cf990d12f0f50cfad2377c74f9ef5d402331eb4459f18e70",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "db7d3b63b72c05332d95ea588e974e667d06d8ed3febb453f4f2e92b7d3d7af3",
+   "rows": [
+    [
+     "Netherlands",
+     262997.04
+    ],
+    [
+     "EIRE",
+     243860.47
+    ],
+    [
+     "Germany",
+     181344.86
+    ],
+    [
+     "France",
+     167282.76
+    ],
+    [
+     "Australia",
+     135984.9
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G04": {
+   "columns": [
+    "active_customers"
+   ],
+   "compiled_sql_sha256": "012eaf65cf710a770854ba78cfebc889a37193ad68554c0a23e7b5f88c894ae1",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "bbda9a9a19a1fb8ebfe7ec44b31f380fa3b8b62c6922b82810c86b549fca4037",
+   "rows": [
+    [
+     92
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G05": {
+   "columns": [
+    "units_sold"
+   ],
+   "compiled_sql_sha256": "243cad86220718217d8b427a70ef10e1ae33fb3771832b6a4dee1748115e17f9",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "4c9df6f305b218ce80d7ef07b19d913e70a677b4d6322ba5e7f63b47157e0349",
+   "rows": [
+    [
+     36840
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G06": {
+   "columns": [
+    "cancellation_rate"
+   ],
+   "compiled_sql_sha256": "c4cc8886fb3a11a878ce20776f5b33e442bd336647f11334c977f6b6bed03a35",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "d242b0daf18196d30c3a347174a79edda9ccbb5ec7ba2d4096f0f25d6d97ea16",
+   "rows": [
+    [
+     0.1642621599340478
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G07": {
+   "columns": [
+    "period_start",
+    "orders"
+   ],
+   "compiled_sql_sha256": "6b71f2f70016cb262413993b2ebc3b6699c5f5f7d2d370b28214b984418172a7",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "7d5817c06a3175d03b48479186099745a1dcd5c4be658eb849a326b3382f7b5c",
+   "rows": [
+    [
+     "2011-01-01",
+     18
+    ],
+    [
+     "2011-04-01",
+     25
+    ],
+    [
+     "2011-07-01",
+     16
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G08": {
+   "columns": [
+    "cancelled_units"
+   ],
+   "compiled_sql_sha256": "27274c44fe4d7e66b06ac23949cb068fa701d9d8ae17448f938f899f72b2115d",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "9b4e311b7b3ac835f88906d1a13201e6ebb4f78c5ea445bab1f0643d4cb8346a",
+   "rows": [
+    [
+     172471
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G09": {
+   "columns": [
+    "period",
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "dd6e0b92d299612579b81a2d4afc1ca2fb6932a80e6439a18e91b66815b9d39f",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "f2b6f48177cc121d68969fe838daa568004dedcfac90eebf5e956e37b0772d4c",
+   "rows": [
+    [
+     "current",
+     877754.89
+    ],
+    [
+     "comparison",
+     928367.93
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G10": {
+   "columns": [
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "454d087aa05f764297f5b022e457272ac7f9b8e251633e654262aa8d2367d16a",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "c33ea8046b65be508dcdab2addc2f14cde5aae773986f6240c99e84c43295463",
+   "rows": [
+    [
+     1193270.16
+    ]
+   ],
+   "trap_strength": null
+  },
+  "G11": {
+   "columns": [
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "2d0ad8f1ae7cd9c817cb472471d27f384d7a186717c85f39b61dff1189c450bc",
+   "metric_def_version": "1.0.0",
+   "naive": {
+    "columns": [
+     "v"
+    ],
+    "rows": [
+     [
+      1162605.16
+     ]
+    ]
+   },
+   "result_sha256": "6bf31fe4e471938130ad4d844ed65ec958715d2332f13ed88f6b4f5e562cf946",
+   "rows": [
+    [
+     760257.78
+    ]
+   ],
+   "trap_strength": {
+    "gold": 760257.78,
+    "naive": 1162605.16,
+    "naive_minus_gold": 402347.3799999999,
+    "relative": 0.529224942624066
+   }
+  },
+  "G12": {
+   "columns": [
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "4b83f45897a9f8d073ba433f4d1c81ef169825609ec8d97aa266eea3f7199ab6",
+   "metric_def_version": "1.0.0",
+   "naive": {
+    "columns": [
+     "v"
+    ],
+    "rows": [
+     [
+      8565122.904
+     ]
+    ]
+   },
+   "result_sha256": "5c875c8193e79f1949aa860f398b5f4afb840d5c154ca605accec49acfaddf3f",
+   "rows": [
+    [
+     8590689.43
+    ]
+   ],
+   "trap_strength": {
+    "gold": 8590689.43,
+    "naive": 8565122.904,
+    "naive_minus_gold": -25566.526000000536,
+    "relative": -0.002976073830665828
+   }
+  },
+  "G13": {
+   "columns": [
+    "orders"
+   ],
+   "compiled_sql_sha256": "4450715e2db75178522c86a88cd8afdba20161352ab3bee89e3fa89beaf53a41",
+   "metric_def_version": "1.0.0",
+   "naive": {
+    "columns": [
+     "v"
+    ],
+    "rows": [
+     [
+      22860
+     ]
+    ]
+   },
+   "result_sha256": "6f7cf2be9e8097cb5aeb22fe7effcb591a68acbebed35c875900fc3367b5c5bc",
+   "rows": [
+    [
+     19304
+    ]
+   ],
+   "trap_strength": {
+    "gold": 19304.0,
+    "naive": 22860.0,
+    "naive_minus_gold": 3556.0,
+    "relative": 0.18421052631578946
+   }
+  },
+  "G14": {
+   "columns": [
+    "revenue_per_customer"
+   ],
+   "compiled_sql_sha256": "bb4d985f05802689338b3936c2ca0f9c9a8ac7a276a37001dea27256af302aa1",
+   "metric_def_version": "1.0.0",
+   "naive": {
+    "columns": [
+     "v"
+    ],
+    "rows": [
+     [
+      1912.2066976127321
+     ]
+    ]
+   },
+   "result_sha256": "b05d9586cf8d556246c83df81798e4652fa32c0f25d6351c38eb654917c39079",
+   "rows": [
+    [
+     1602.4727851458888
+    ]
+   ],
+   "trap_strength": {
+    "gold": 1602.4727851458888,
+    "naive": 1912.2066976127321,
+    "naive_minus_gold": 309.7339124668433,
+    "relative": 0.1932849751570946
+   }
+  },
+  "G15": {
+   "columns": [
+    "period",
+    "net_product_revenue"
+   ],
+   "compiled_sql_sha256": "438a699e295350874ce40b9b078a67791fddd612eb9fb609a8c16632fc9dc4c4",
+   "metric_def_version": "1.0.0",
+   "naive": null,
+   "result_sha256": "4fdeea42cbda4202b5d3d443f96fbb7f65f995122c0b19652ed331a83c1b9ad8",
+   "rows": [
+    [
+     "current",
+     441363.22
+    ],
+    [
+     "comparison",
+     1432731.7
+    ]
+   ],
+   "trap_strength": null
+  }
+ },
+ "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+ "snapshot": {
+  "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b",
+  "max_invoice_ts": "2011-12-09T12:50:00",
+  "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980"
+ }
+}

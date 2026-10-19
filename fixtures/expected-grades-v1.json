@@ -1,0 +1,42 @@
+{
+  "label": "FIXTURES",
+  "note": "Expected grades, written from the rules in grader.py's docstring BEFORE the grader was ever run on these fixtures, then sha256-frozen. A disagreement between these and the grader is reported as a finding, never resolved by editing this file.",
+  "grades": {
+    "F01": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F02": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": false},
+    "F03": {"a": false, "b": false, "c": false, "d": false, "cell": "valid_wrong_question", "trap_sprung": null},
+    "F04": {"a": true,  "b": false, "c": false, "d": false, "cell": "valid_wrong_question", "trap_sprung": null},
+    "F05": {"a": true,  "b": true,  "c": false, "d": true,  "cell": "valid_misreported",    "trap_sprung": null},
+    "F06": {"a": true,  "b": true,  "c": true,  "d": false, "cell": "valid_wrong_question", "trap_sprung": true},
+    "F07": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": false},
+    "F08": {"a": "N/A", "b": "N/A", "c": "N/A", "d": true,  "cell": "correct_abstain",      "trap_sprung": null},
+    "F09": {"a": "N/A", "b": "N/A", "c": "N/A", "d": true,  "cell": "correct_abstain",      "trap_sprung": null},
+    "F10": {"a": false, "b": false, "c": false, "d": false, "cell": "false_abstain",        "trap_sprung": null},
+    "F11": {"a": false, "b": false, "c": false, "d": false, "cell": "unwarranted_answer",   "trap_sprung": null},
+    "F12": {"a": false, "b": false, "c": false, "d": false, "cell": "no_answer",            "trap_sprung": null},
+    "F13": {"a": false, "b": false, "c": false, "d": true,  "cell": "invalid_right_intent", "trap_sprung": null},
+    "F14": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F15": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F16": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F17": {"a": "N/A", "b": false, "c": false, "d": true,  "cell": "valid_wrong_question", "trap_sprung": true},
+    "F18": {"a": "N/A", "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": false},
+    "F19": {"a": "N/A", "b": false, "c": false, "d": true,  "cell": "valid_wrong_question", "trap_sprung": true},
+    "F20": {"a": "N/A", "b": false, "c": false, "d": true,  "cell": "valid_wrong_question", "trap_sprung": true},
+    "F21": {"a": "N/A", "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F22": {"a": "N/A", "b": false, "c": false, "d": false, "cell": "no_answer",            "trap_sprung": null},
+    "F23": {"a": "N/A", "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": null},
+    "F24": {"a": "N/A", "b": "N/A", "c": "N/A", "d": true,  "cell": "correct_abstain",      "trap_sprung": null},
+    "F25": {"a": "N/A", "b": false, "c": false, "d": false, "cell": "unwarranted_answer",   "trap_sprung": null},
+    "F26": {"a": true,  "b": true,  "c": true,  "d": true,  "cell": "correct",              "trap_sprung": false}
+  },
+  "expected_counts": {"valid_wrong_question": 6, "correct": 10, "correct_abstain": 3},
+  "controls": {
+    "canary": {"request": {"metric": "net_product_revenue", "time_range": {"start": "2009-12-01", "end": "2011-12-09"}},
+               "known_answer": 18980128.63, "tolerance": 0.01,
+               "source": "independent data-profile script (regex product rule, DOUBLE arithmetic), sum_value_dedup_overlap_product_only",
+               "expected_with_real_compiler": "PASS", "expected_with_planted_broken_compiler": "FAIL"},
+    "planted_broken_compiler": {"bug": "drops convention C1: the duplicated 2010-12-01..09 window is counted twice",
+                                "expected_grade_changes": {"F26": {"a": true, "b": false, "c": false, "d": true, "cell": "valid_wrong_question", "trap_sprung": true}},
+                                "expected_unchanged": "every other fixture"}
+  }
+}

@@ -1,0 +1,2281 @@
+{
+ "label": "FIXTURES",
+ "planted_bug": null,
+ "inputs": {
+  "transcripts_sha256": "61e022183498fbb77ef49331277e8bdeb8b5d2cf2eaa3ffe12388bd4a34829fb",
+  "expected_grades_sha256": "fa54230acf3d9b9b949801cbedfcfff6eaaa3a3d05e564848f6b013b6b991370",
+  "golden_sha256": "9472869d5b1a4a79460c80ad2ff7eedad63da3a53e704928ebd669d2c77f715a",
+  "expected_tables_sha256": "345dd5cd00485668f9f3bcdd2baf2515db0af452ecf07b968a75a62d1b404719",
+  "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e"
+ },
+ "canary": {
+  "result": 18980128.63,
+  "known_answer": 18980128.63,
+  "pass": true,
+  "error": null
+ },
+ "runs": [
+  {
+   "id": "F01",
+   "arm": "mcp",
+   "item": "G01",
+   "planted": "none (correct)",
+   "steps": [
+    {
+     "tool": "list_metrics",
+     "args": {},
+     "tool_error": false,
+     "result_type": null
+    },
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ]
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ?) AS q LIMIT 1001",
+     "params": [
+      "2011-11-01",
+      "2011-11-30",
+      "United Kingdom"
+     ],
+     "compiled_sql_sha256": "22507f3f57a993105c7df573833c5ea95fc138126bad0a8167619c6cfca1cb1c",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        1264300.58
+       ]
+      ]
+     },
+     "result_sha256": "7557a08caf0bac91bd49730d54ae371a490f5a7836e58df85cb995c23b7bd423",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-11-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "63e876cddd1b40578fdf5df07e531f71",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.203",
+      "elapsed_s": 0.013
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Revenue in the United Kingdom in November 2011 was \\u00a31,264,300.58.\"}"
+  },
+  {
+   "id": "F02",
+   "arm": "mcp",
+   "item": "G12",
+   "planted": "none (governed metric excludes non-product rows)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-11-30"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-11-30"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q LIMIT 1001",
+     "params": [
+      "2011-01-01",
+      "2011-11-30"
+     ],
+     "compiled_sql_sha256": "4b83f45897a9f8d073ba433f4d1c81ef169825609ec8d97aa266eea3f7199ab6",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        8590689.43
+       ]
+      ]
+     },
+     "result_sha256": "5c875c8193e79f1949aa860f398b5f4afb840d5c154ca605accec49acfaddf3f",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-01-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "469fd69810bf4fa2a3e52cb66f55e840",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.218",
+      "elapsed_s": 0.011
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Total revenue between January and November 2011 was \\u00a38,590,689.43.\"}"
+  },
+  {
+   "id": "F03",
+   "arm": "mcp",
+   "item": "G01",
+   "planted": "axis a: wrong governed metric (units_sold) reported as revenue",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "units_sold",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ]
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "units_sold",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": null
+     },
+     "metric_id": "units_sold",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity) END) AS units_sold FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ?) AS q LIMIT 1001",
+     "params": [
+      "2011-11-01",
+      "2011-11-30",
+      "United Kingdom"
+     ],
+     "compiled_sql_sha256": "00817c053a1e4c95684cd0d57ee08eac703709dc5ba8501cc9531a0fa199a67e",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "units_sold"
+      ],
+      "rows": [
+       [
+        648267
+       ]
+      ]
+     },
+     "result_sha256": "f14fe0c454ae946ddb94b7f587506f77b68913a5bfb61b24dba7dbb602bb2897",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-11-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C4"
+      ]
+     },
+     "run": {
+      "request_id": "98f8b5f4f1c34836b8448413c68bc4c1",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.231",
+      "elapsed_s": 0.011
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"units_sold\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Revenue in the United Kingdom in November 2011 was 648,267.\"}"
+  },
+  {
+   "id": "F04",
+   "arm": "mcp",
+   "item": "G09",
+   "planted": "axis d + b: compared with September 2011 instead of October 2010",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-10-01",
+       "end": "2011-10-31"
+      },
+      "comparison_range": {
+       "start": "2011-09-01",
+       "end": "2011-09-30"
+      },
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ]
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-10-01",
+       "end": "2011-10-31"
+      },
+      "comparison_range": {
+       "start": "2011-09-01",
+       "end": "2011-09-30"
+      },
+      "grain": null,
+      "dimensions": [],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT 'current' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ? UNION ALL SELECT 'comparison' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ?) AS q ORDER BY period DESC LIMIT 1001",
+     "params": [
+      "2011-10-01",
+      "2011-10-31",
+      "United Kingdom",
+      "2011-09-01",
+      "2011-09-30",
+      "United Kingdom"
+     ],
+     "compiled_sql_sha256": "39205346f58710568e99d4be8499f0bf30e8c0dfdcfb5df55a84016224791dd0",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "period",
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        "current",
+        877754.89
+       ],
+       [
+        "comparison",
+        862126.18
+       ]
+      ]
+     },
+     "result_sha256": "813094c00a13f2738aa19f57b98f65bd3e79c6b45b89b1cf0a310d0d36942377",
+     "row_count": 2,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-10-31",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-10-01"
+      },
+      {
+       "name": "comparison_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-09-30",
+       "note": null
+      },
+      {
+       "name": "comparison_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-09-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 2
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "ad5260a00b0d49519477a3298a4edfe6",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.243",
+      "elapsed_s": 0.021
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-10-01\", \"end\": \"2011-10-31\", \"incomplete\": false}, \"comparison\": {\"period\": {\"start\": \"2011-09-01\", \"end\": \"2011-09-30\"}}, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"UK revenue was \\u00a3877,754.89 in October 2011 against \\u00a3862,126.18 in September 2011.\"}"
+  },
+  {
+   "id": "F05",
+   "arm": "mcp",
+   "item": "G01",
+   "planted": "axis c only: correct query, number misreported by +10%",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ]
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ?) AS q LIMIT 1001",
+     "params": [
+      "2011-11-01",
+      "2011-11-30",
+      "United Kingdom"
+     ],
+     "compiled_sql_sha256": "22507f3f57a993105c7df573833c5ea95fc138126bad0a8167619c6cfca1cb1c",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        1264300.58
+       ]
+      ]
+     },
+     "result_sha256": "7557a08caf0bac91bd49730d54ae371a490f5a7836e58df85cb995c23b7bd423",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-11-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "ec1e6e04aa554555b9b154ebbc53ad1e",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.265",
+      "elapsed_s": 0.013
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Revenue in the United Kingdom in November 2011 was \\u00a31,390,730.64.\"}"
+  },
+  {
+   "id": "F06",
+   "arm": "mcp",
+   "item": "G15",
+   "planted": "axis d only (trap): incomplete December not flagged",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-12-01",
+       "end": "2011-12-31"
+      },
+      "comparison_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-12-01",
+       "end": "2011-12-31"
+      },
+      "comparison_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT 'current' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) UNION ALL SELECT 'comparison' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q ORDER BY period DESC LIMIT 1001",
+     "params": [
+      "2011-12-01",
+      "2011-12-31",
+      "2011-11-01",
+      "2011-11-30"
+     ],
+     "compiled_sql_sha256": "438a699e295350874ce40b9b078a67791fddd612eb9fb609a8c16632fc9dc4c4",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "period",
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        "current",
+        441363.22
+       ],
+       [
+        "comparison",
+        1432731.7
+       ]
+      ]
+     },
+     "result_sha256": "4fdeea42cbda4202b5d3d443f96fbb7f65f995122c0b19652ed331a83c1b9ad8",
+     "row_count": 2,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": false,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-12-31",
+       "note": "data ends 2011-12-09T12:50:00; the period is incomplete"
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-12-01"
+      },
+      {
+       "name": "comparison_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "comparison_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-11-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 2
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "1bb178c33c38497a9f029d1e4b40ad03",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.280",
+      "elapsed_s": 0.015
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2011-12-01\", \"end\": \"2011-12-31\", \"incomplete\": false}, \"comparison\": {\"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\"}}, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Revenue fell to \\u00a3441,363.22 in December 2011 from \\u00a31,432,731.70 in November 2011.\"}"
+  },
+  {
+   "id": "F07",
+   "arm": "mcp",
+   "item": "G15",
+   "planted": "none (incomplete period flagged)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-12-01",
+       "end": "2011-12-31"
+      },
+      "comparison_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-12-01",
+       "end": "2011-12-31"
+      },
+      "comparison_range": {
+       "start": "2011-11-01",
+       "end": "2011-11-30"
+      },
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT 'current' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) UNION ALL SELECT 'comparison' AS period, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q ORDER BY period DESC LIMIT 1001",
+     "params": [
+      "2011-12-01",
+      "2011-12-31",
+      "2011-11-01",
+      "2011-11-30"
+     ],
+     "compiled_sql_sha256": "438a699e295350874ce40b9b078a67791fddd612eb9fb609a8c16632fc9dc4c4",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "period",
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        "current",
+        441363.22
+       ],
+       [
+        "comparison",
+        1432731.7
+       ]
+      ]
+     },
+     "result_sha256": "4fdeea42cbda4202b5d3d443f96fbb7f65f995122c0b19652ed331a83c1b9ad8",
+     "row_count": 2,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": false,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-12-31",
+       "note": "data ends 2011-12-09T12:50:00; the period is incomplete"
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-12-01"
+      },
+      {
+       "name": "comparison_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "comparison_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-11-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 2
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "b4dfcbf75a604405adbc3b8ae59efa30",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.296",
+      "elapsed_s": 0.011
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2011-12-01\", \"end\": \"2011-12-31\", \"incomplete\": true}, \"comparison\": {\"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\"}}, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"December 2011 is incomplete (the data ends on 9 December): \\u00a3441,363.22 so far, against \\u00a31,432,731.70 for all of November 2011.\"}"
+  },
+  {
+   "id": "F08",
+   "arm": "mcp",
+   "item": "G16",
+   "planted": "none (correct clarification)",
+   "steps": [],
+   "receipts": [],
+   "final_text": "{\"behavior\": \"clarify\", \"resolved_spec\": null, \"answer\": null, \"clarification_question\": \"Which metric, and which quarter: Q3 2011 (the last complete one) or Q4 2011 so far?\", \"abstain_reason\": null}"
+  },
+  {
+   "id": "F09",
+   "arm": "mcp",
+   "item": "G19",
+   "planted": "none (correct abstention after no_governed_metric)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "profit_margin",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-12-31"
+      }
+     },
+     "tool_error": false,
+     "result_type": "no_governed_metric"
+    }
+   ],
+   "receipts": [],
+   "final_text": "{\"behavior\": \"abstain\", \"resolved_spec\": null, \"answer\": null, \"clarification_question\": null, \"abstain_reason\": \"There is no cost data, so margin cannot be computed.\"}"
+  },
+  {
+   "id": "F10",
+   "arm": "mcp",
+   "item": "G04",
+   "planted": "false abstention on an answerable item",
+   "steps": [
+    {
+     "tool": "list_metrics",
+     "args": {},
+     "tool_error": false,
+     "result_type": null
+    }
+   ],
+   "receipts": [],
+   "final_text": "{\"behavior\": \"abstain\", \"resolved_spec\": null, \"answer\": null, \"clarification_question\": null, \"abstain_reason\": \"Customer data is not available by country.\"}"
+  },
+  {
+   "id": "F11",
+   "arm": "mcp",
+   "item": "G19",
+   "planted": "unwarranted answer: revenue reported as profit margin",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-12-31"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-12-31"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q LIMIT 1001",
+     "params": [
+      "2011-01-01",
+      "2011-12-31"
+     ],
+     "compiled_sql_sha256": "1d6557ef07f412892484e5498186e9ceb63bd8e8c7be9f6f49aec010e6f7c60b",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        9032052.65
+       ]
+      ]
+     },
+     "result_sha256": "3efe328cfc1727dcdde677e11eb1c16e0ee800bac3ba08b4785280e275c071c7",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": false,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-12-31",
+       "note": "data ends 2011-12-09T12:50:00; the period is incomplete"
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-01-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "0c1c6ebea9ef46e989e82091606cb08a",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.311",
+      "elapsed_s": 0.013
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-12-31\", \"incomplete\": true}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Profit in 2011 was \\u00a39,032,052.65.\"}"
+  },
+  {
+   "id": "F12",
+   "arm": "mcp",
+   "item": "G05",
+   "planted": "tool-call failure: malformed filter op, then no final message",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "units_sold",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-11-30"
+      },
+      "filters": [
+       {
+        "dim": "stock_code",
+        "op": "like",
+        "value": "85123A"
+       }
+      ]
+     },
+     "tool_error": true,
+     "error_text": "Error executing tool query_metric: 1 validation error for query_metricArguments\nfilters.0.op\n  Input should be 'eq', 'ne', 'in', 'is_null' or 'not_null' [type=literal_error, input_value='like', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/literal_error"
+    }
+   ],
+   "receipts": [],
+   "final_text": ""
+  },
+  {
+   "id": "F13",
+   "arm": "mcp",
+   "item": "G06",
+   "planted": "tool-call failure, then an invented number with the right spec",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "cancellation_rate",
+      "time_range": {
+       "start": "Q1 2011",
+       "end": "2011-03-31"
+      }
+     },
+     "tool_error": false,
+     "result_type": "invalid_request"
+    }
+   ],
+   "receipts": [],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"cancellation_rate\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-03-31\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"The cancellation rate in the first quarter of 2011 was about 15%.\"}"
+  },
+  {
+   "id": "F14",
+   "arm": "mcp",
+   "item": "G06",
+   "planted": "none (ratio stated as a percentage)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "cancellation_rate",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-03-31"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "cancellation_rate",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-03-31"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "cancellation_rate",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT COUNT(DISTINCT CASE WHEN (invoice LIKE 'C%') THEN (invoice) END) * 1.0 / NULLIF(COUNT(DISTINCT CASE WHEN NOT (invoice LIKE 'A%') THEN (invoice) END), 0) AS cancellation_rate FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q LIMIT 1001",
+     "params": [
+      "2011-01-01",
+      "2011-03-31"
+     ],
+     "compiled_sql_sha256": "c4cc8886fb3a11a878ce20776f5b33e442bd336647f11334c977f6b6bed03a35",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "cancellation_rate"
+      ],
+      "rows": [
+       [
+        0.1642621599340478
+       ]
+      ]
+     },
+     "result_sha256": "d242b0daf18196d30c3a347174a79edda9ccbb5ec7ba2d4096f0f25d6d97ea16",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-03-31",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-01-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "no rollup path in compiler"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C6"
+      ]
+     },
+     "run": {
+      "request_id": "1da688f53bfa47f88eae19f1ce9f5f0d",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.328",
+      "elapsed_s": 0.007
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"cancellation_rate\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-03-31\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"The cancellation rate in the first quarter of 2011 was 16.43%.\"}"
+  },
+  {
+   "id": "F15",
+   "arm": "mcp",
+   "item": "G07",
+   "planted": "none (quarterly grain, three rows)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "orders",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-09-30"
+      },
+      "grain": "quarter",
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "Netherlands"
+       }
+      ]
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "orders",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-09-30"
+      },
+      "comparison_range": null,
+      "grain": "quarter",
+      "dimensions": [],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "eq",
+        "value": "Netherlands"
+       }
+      ],
+      "ranking": null
+     },
+     "metric_id": "orders",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT CAST(date_trunc('quarter', CAST(invoice_ts AS DATE)) AS DATE) AS period_start, COUNT(DISTINCT CASE WHEN (invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (invoice) END) AS orders FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country = ? GROUP BY period_start) AS q ORDER BY period_start LIMIT 1001",
+     "params": [
+      "2011-01-01",
+      "2011-09-30",
+      "Netherlands"
+     ],
+     "compiled_sql_sha256": "2e2fd681630963f30f778b4f3876709ca723529f26cc64d57cfa3350b2d5f531",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "period_start",
+       "orders"
+      ],
+      "rows": [
+       [
+        "2011-01-01",
+        18
+       ],
+       [
+        "2011-04-01",
+        25
+       ],
+       [
+        "2011-07-01",
+        16
+       ]
+      ]
+     },
+     "result_sha256": "7d5817c06a3175d03b48479186099745a1dcd5c4be658eb849a326b3382f7b5c",
+     "row_count": 3,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-09-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-01-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "no rollup path in compiler"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 3
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C4"
+      ]
+     },
+     "run": {
+      "request_id": "46824fd6f8f041708ca34a0e22ec61c9",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.337",
+      "elapsed_s": 0.004
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"orders\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"Netherlands\"}], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-09-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": \"quarter\", \"dimensions\": [], \"ranking\": null}, \"answer\": \"Orders from the Netherlands: Q1 18, Q2 25, Q3 16.\"}"
+  },
+  {
+   "id": "F16",
+   "arm": "mcp",
+   "item": "G03",
+   "planted": "none (ranking with a negated filter)",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-11-30"
+      },
+      "dimensions": [
+       "country"
+      ],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "ne",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": {
+       "direction": "desc",
+       "limit": 5
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2011-01-01",
+       "end": "2011-11-30"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [
+       "country"
+      ],
+      "filters": [
+       {
+        "dim": "country",
+        "op": "ne",
+        "value": "United Kingdom"
+       }
+      ],
+      "ranking": {
+       "by": "net_product_revenue",
+       "direction": "desc",
+       "limit": 5
+      }
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT country AS country, SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE) AND country <> ? GROUP BY country) AS q ORDER BY net_product_revenue DESC NULLS LAST, country LIMIT 5",
+     "params": [
+      "2011-01-01",
+      "2011-11-30",
+      "United Kingdom"
+     ],
+     "compiled_sql_sha256": "9741972bfb505008f68725dd497ae80e773d9f2932160533eb7e8ca33db0e867",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "country",
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        "Netherlands",
+        262997.04
+       ],
+       [
+        "EIRE",
+        243860.47
+       ],
+       [
+        "Germany",
+        181344.86
+       ],
+       [
+        "France",
+        167282.76
+       ],
+       [
+        "Australia",
+        135984.9
+       ]
+      ]
+     },
+     "result_sha256": "db7d3b63b72c05332d95ea588e974e667d06d8ed3febb453f4f2e92b7d3d7af3",
+     "row_count": 5,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2011-11-30",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2011-01-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 5
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "480dbe3666df4837a226ca8b85e6121c",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.342",
+      "elapsed_s": 0.008
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [{\"dim\": \"country\", \"op\": \"ne\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [\"country\"], \"ranking\": {\"by\": \"net_product_revenue\", \"direction\": \"desc\", \"limit\": 5}}, \"answer\": \"The top two were the Netherlands (\\u00a3262,997.04) and EIRE (\\u00a3243,860.47).\"}"
+  },
+  {
+   "id": "F17",
+   "arm": "raw",
+   "item": "G11",
+   "planted": "trap: sheet overlap counted twice",
+   "steps": [
+    {
+     "tool": "describe_tables",
+     "args": {},
+     "tool_error": false,
+     "result_type": null,
+     "error_text": null
+    },
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'",
+     "params": [],
+     "compiled_sql_sha256": "011a2b922d6739100aa365308281622833e622335f4b0a08d47e8fd6cd6b6675",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "revenue"
+      ],
+      "rows": [
+       [
+        1162605.16
+       ]
+      ]
+     },
+     "result_sha256": "408161b844e7dbc2e70c35dc62776c4ac951fc97133a6ab2c934d80ecfb09c0a",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "033b69e81f774d88a77b9880a8254e91",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.493",
+      "elapsed_s": 0.006
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2010-12-01\", \"end\": \"2010-12-31\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Total revenue in December 2010 was \\u00a31,162,605.16.\"}"
+  },
+  {
+   "id": "F18",
+   "arm": "raw",
+   "item": "G11",
+   "planted": "none (overlap removed)",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2010-12-01' AND DATE '2010-12-31'",
+     "params": [],
+     "compiled_sql_sha256": "2c167b932fc6a10d895eae9b6e020e0e099e3910101ca3fb3cd592e6225d8f47",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "revenue"
+      ],
+      "rows": [
+       [
+        760257.78
+       ]
+      ]
+     },
+     "result_sha256": "48dd4912ae7fc48a9ab9c6ba6553713b6bee4e721138326b023eb6759f2434e9",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "790a8fc3590e48889a1ca02666897bec",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.499",
+      "elapsed_s": 0.009
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2010-12-01\", \"end\": \"2010-12-31\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Total revenue in December 2010 was \\u00a3760,257.78.\"}"
+  },
+  {
+   "id": "F19",
+   "arm": "raw",
+   "item": "G13",
+   "planted": "trap: cancellation and bad-debt invoices counted as orders",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT COUNT(DISTINCT invoice) AS orders FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT COUNT(DISTINCT invoice) AS orders FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT COUNT(DISTINCT invoice) AS orders FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'",
+     "params": [],
+     "compiled_sql_sha256": "69f85e3ce735568cc842fa94b6da60ef457ab7564aa031246914d2a4dd84affd",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "orders"
+      ],
+      "rows": [
+       [
+        22860
+       ]
+      ]
+     },
+     "result_sha256": "ca8b2fec28fcaefb711c53fa5f7dfde1fcba022fbbaae9f8f863614a7097c124",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "7927a23bdd784595985b4defea8d2231",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.508",
+      "elapsed_s": 0.006
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"orders\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"22,860 orders were placed between January and November 2011.\"}"
+  },
+  {
+   "id": "F20",
+   "arm": "raw",
+   "item": "G14",
+   "planted": "trap: unattributed revenue in the numerator",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT SUM(CASE WHEN trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN quantity * price END) / COUNT(DISTINCT CASE WHEN invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN customer_id END) AS rpc FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND country = 'United Kingdom' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT SUM(CASE WHEN trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN quantity * price END) / COUNT(DISTINCT CASE WHEN invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN customer_id END) AS rpc FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND country = 'United Kingdom' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT SUM(CASE WHEN trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN quantity * price END) / COUNT(DISTINCT CASE WHEN invoice NOT LIKE 'C%' AND invoice NOT LIKE 'A%' AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' THEN customer_id END) AS rpc FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND country = 'United Kingdom' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'",
+     "params": [],
+     "compiled_sql_sha256": "c2fed72a184bf60b0137dcf6a10d34f394b2607acdb7ba18b824bbf6828157ef",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "rpc"
+      ],
+      "rows": [
+       [
+        1912.2066976127321
+       ]
+      ]
+     },
+     "result_sha256": "426c13a8f9f5da4858673636f26b34b9a9b5a6b2afe19728c9a116c7ab36707c",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "e19aacfb9c244514b6c9ab20cdd479df",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.513",
+      "elapsed_s": 0.023
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"revenue_per_customer\", \"filters\": [{\"dim\": \"country\", \"op\": \"eq\", \"value\": \"United Kingdom\"}], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Average revenue per UK customer was \\u00a31,912.21.\"}"
+  },
+  {
+   "id": "F21",
+   "arm": "raw",
+   "item": "G02",
+   "planted": "none (months written as YYYY-MM)",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT strftime(CAST(invoice_ts AS DATE), '%Y-%m') AS month, SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-06-30' GROUP BY 1 ORDER BY 1"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT strftime(CAST(invoice_ts AS DATE), '%Y-%m') AS month, SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-06-30' GROUP BY 1 ORDER BY 1"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT strftime(CAST(invoice_ts AS DATE), '%Y-%m') AS month, SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-06-30' GROUP BY 1 ORDER BY 1",
+     "params": [],
+     "compiled_sql_sha256": "f03224d475760993267e941b0993296f87299d3b082d64dcc1fa741911f0de8a",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "month",
+       "revenue"
+      ],
+      "rows": [
+       [
+        "2011-01",
+        580388.64
+       ],
+       [
+        "2011-02",
+        500493.88
+       ],
+       [
+        "2011-03",
+        680457.29
+       ],
+       [
+        "2011-04",
+        482878.0
+       ],
+       [
+        "2011-05",
+        732205.53
+       ],
+       [
+        "2011-06",
+        724991.03
+       ]
+      ]
+     },
+     "result_sha256": "7d753379177c0e5d56f3831a051e0b10a138c602042fa8495c7e0ffbac7830bc",
+     "row_count": 6,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 6
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "e307fb65b9d84be68d369766cf262674",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.536",
+      "elapsed_s": 0.024
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-06-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": \"month\", \"dimensions\": [], \"ranking\": null}, \"answer\": \"January 2011: \\u00a3580,388.64; June 2011: \\u00a3724,991.03.\"}"
+  },
+  {
+   "id": "F22",
+   "arm": "raw",
+   "item": "G03",
+   "planted": "tool-call failure (bad column), then a prose reply that breaks the output contract",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT country, SUM(revenue) FROM raw_lines GROUP BY 1"
+     },
+     "tool_error": false,
+     "result_type": "error",
+     "error_text": "BinderException: Binder Error: Referenced column \"revenue\" not found in FROM clause!"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT country, SUM(revenue) FROM raw_lines GROUP BY 1"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT country, SUM(revenue) FROM raw_lines GROUP BY 1",
+     "params": [],
+     "compiled_sql_sha256": "1e5925a893806eca03ead02b78837d2f25b1b5e2b138af0dccf5c25702ba640f",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [],
+      "rows": []
+     },
+     "result_sha256": null,
+     "row_count": 0,
+     "truncated": false,
+     "error": "BinderException: Binder Error: Referenced column \"revenue\" not found in FROM clause!",
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 0
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "9fc12be5eb1e4f7698597f9456f88c80",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.559",
+      "elapsed_s": 0.001
+     }
+    }
+   ],
+   "final_text": "I could not compute this because the revenue column does not exist."
+  },
+  {
+   "id": "F23",
+   "arm": "raw",
+   "item": "G10",
+   "planted": "none (null customer filter)",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND customer_id IS NULL AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND customer_id IS NULL AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT SUM(quantity * price) AS revenue FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10') AND trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}' AND customer_id IS NULL AND CAST(invoice_ts AS DATE) BETWEEN DATE '2011-01-01' AND DATE '2011-11-30'",
+     "params": [],
+     "compiled_sql_sha256": "1f5d1f029363ae2f87d4ea6da75e9b7e73696219d0525c2116372810997f4877",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "revenue"
+      ],
+      "rows": [
+       [
+        1193270.16
+       ]
+      ]
+     },
+     "result_sha256": "2b4df1383dca0eb4fb9f674ba7784c09609e5fc37906afd7df69b638f3693e1a",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "ca477f33322b48c9bd8cf4cf6065ac03",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.560",
+      "elapsed_s": 0.008
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [{\"dim\": \"customer_id\", \"op\": \"is_null\", \"value\": null}], \"period\": {\"start\": \"2011-01-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Lines with no customer ID brought in \\u00a31,193,270.16 between January and November 2011.\"}"
+  },
+  {
+   "id": "F24",
+   "arm": "raw",
+   "item": "G18",
+   "planted": "none (correct clarification)",
+   "steps": [],
+   "receipts": [],
+   "final_text": "{\"behavior\": \"clarify\", \"resolved_spec\": null, \"answer\": null, \"clarification_question\": \"Do you mean cancelled invoices over all invoices, cancelled units over units sold, or cancelled value over revenue, and for which period?\", \"abstain_reason\": null}"
+  },
+  {
+   "id": "F25",
+   "arm": "raw",
+   "item": "G20",
+   "planted": "unwarranted answer: an invented visitor count",
+   "steps": [
+    {
+     "tool": "run_sql",
+     "args": {
+      "sql": "SELECT COUNT(DISTINCT customer_id) AS visitors FROM raw_lines WHERE CAST(invoice_ts AS DATE) BETWEEN DATE '2011-11-01' AND DATE '2011-11-30'"
+     },
+     "tool_error": false,
+     "result_type": "ok",
+     "error_text": null
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "raw_sql",
+     "request": {
+      "sql": "SELECT COUNT(DISTINCT customer_id) AS visitors FROM raw_lines WHERE CAST(invoice_ts AS DATE) BETWEEN DATE '2011-11-01' AND DATE '2011-11-30'"
+     },
+     "metric_id": null,
+     "metric_def_version": null,
+     "semantic_model_sha256": null,
+     "compiled_sql": "SELECT COUNT(DISTINCT customer_id) AS visitors FROM raw_lines WHERE CAST(invoice_ts AS DATE) BETWEEN DATE '2011-11-01' AND DATE '2011-11-30'",
+     "params": [],
+     "compiled_sql_sha256": "4cf79ee2f7bba23de43dcfbe5800330ed311c9dbbfe95368fadbbd9d1e324e70",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "visitors"
+      ],
+      "rows": [
+       [
+        1711
+       ]
+      ]
+     },
+     "result_sha256": "a0546dbfdb29dcbedbe7f4b02fa90f02a5f6a1af6d310811aa0dea1fee3a0856",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": []
+     },
+     "run": {
+      "request_id": "f8971563eb0345808a1799ac521be13f",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.568",
+      "elapsed_s": 0.003
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"active_customers\", \"filters\": [], \"period\": {\"start\": \"2011-11-01\", \"end\": \"2011-11-30\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"About 1,711 people visited the website in November 2011.\"}"
+  },
+  {
+   "id": "F26",
+   "arm": "mcp",
+   "item": "G11",
+   "planted": "none (correct); the planted broken compiler control flips it",
+   "steps": [
+    {
+     "tool": "query_metric",
+     "args": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2010-12-01",
+       "end": "2010-12-31"
+      }
+     },
+     "tool_error": false,
+     "result_type": "ok"
+    }
+   ],
+   "receipts": [
+    {
+     "receipt_version": "1",
+     "kind": "governed_metric",
+     "request": {
+      "metric": "net_product_revenue",
+      "time_range": {
+       "start": "2010-12-01",
+       "end": "2010-12-31"
+      },
+      "comparison_range": null,
+      "grain": null,
+      "dimensions": [],
+      "filters": [],
+      "ranking": null
+     },
+     "metric_id": "net_product_revenue",
+     "metric_def_version": "1.0.0",
+     "semantic_model_sha256": "d1d2cd0a49caf648ad0af6fb68bbd7fe9da80ed67da93ab8f2b7def5ae64e82e",
+     "compiled_sql": "WITH lines AS (SELECT * FROM raw_lines WHERE NOT (source_sheet = 'Year 2010-2011' AND invoice_ts < TIMESTAMP '2010-12-10 00:00:00')) SELECT * FROM (SELECT SUM(CASE WHEN (trim(stock_code) SIMILAR TO '[0-9]{5}[A-Za-z]{0,2}') THEN (quantity * price) END) AS net_product_revenue FROM lines WHERE CAST(invoice_ts AS DATE) BETWEEN CAST(? AS DATE) AND CAST(? AS DATE)) AS q LIMIT 1001",
+     "params": [
+      "2010-12-01",
+      "2010-12-31"
+     ],
+     "compiled_sql_sha256": "2d0ad8f1ae7cd9c817cb472471d27f384d7a186717c85f39b61dff1189c450bc",
+     "engine": {
+      "name": "duckdb",
+      "version": "1.5.6"
+     },
+     "snapshot": {
+      "source_xlsx_sha256": "bcbe73b35f5b7babf197fb0cb983a11f5d9ff929078d4aa53d171b1f2df2e980",
+      "max_invoice_ts": "2011-12-09T12:50:00",
+      "db_file_sha256": "c2f31a41753548a1ba21d48e152901cf40e1502637d204f1788bad035934310b"
+     },
+     "result": {
+      "columns": [
+       "net_product_revenue"
+      ],
+      "rows": [
+       [
+        760257.78
+       ]
+      ]
+     },
+     "result_sha256": "6bf31fe4e471938130ad4d844ed65ec958715d2332f13ed88f6b4f5e562cf946",
+     "row_count": 1,
+     "truncated": false,
+     "error": null,
+     "checks": [
+      {
+       "name": "time_range_complete",
+       "success": true,
+       "expected": "end <= last data date 2011-12-09",
+       "actual": "2010-12-31",
+       "note": null
+      },
+      {
+       "name": "time_range_starts_in_data",
+       "success": true,
+       "expected": "start >= 2009-12-01",
+       "actual": "2010-12-01"
+      },
+      {
+       "name": "non_additive_guard",
+       "success": true,
+       "expected": "ratio/count-distinct computed from components in every group",
+       "actual": "additive metric"
+      },
+      {
+       "name": "row_cap",
+       "success": true,
+       "expected": "<= 1000 rows",
+       "actual": 1
+      }
+     ],
+     "uncertainty": {
+      "caveats_applied": [
+       "C1",
+       "C2",
+       "C3"
+      ]
+     },
+     "run": {
+      "request_id": "ee3c89391d704725bcdf6b5a44632b39",
+      "server_version": "0.0.1",
+      "started_at": "2026-10-15T09:32:19.352",
+      "elapsed_s": 0.007
+     }
+    }
+   ],
+   "final_text": "{\"behavior\": \"answer\", \"resolved_spec\": {\"metric\": \"net_product_revenue\", \"filters\": [], \"period\": {\"start\": \"2010-12-01\", \"end\": \"2010-12-31\", \"incomplete\": false}, \"comparison\": null, \"grain\": null, \"dimensions\": [], \"ranking\": null}, \"answer\": \"Total revenue in December 2010 was \\u00a3760,257.78.\"}"
+  }
+ ]
+}

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "analyticsreceipts"
+dynamic = ["version"]
+description = "A four-axis grader with per-answer receipts for analytics agents over a semantic layer."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+dependencies = [
+  "duckdb==1.5.6",
+  "mcp==2.3.0",
+  "pyyaml>=6.0",
+  "jsonschema>=4.20",
+]
+
+[project.optional-dependencies]
+load = ["openpyxl>=3.1"]
+test = ["pytest>=8"]
+
+[tool.hatch.version]
+path = "src/analyticsreceipts/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/analyticsreceipts"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"model/online_retail.ossie.yaml" = "analyticsreceipts/data/online_retail.ossie.yaml"
+"vendor/ossie/ossie-schema.json" = "analyticsreceipts/data/ossie-schema.json"
+"vendor/ossie/README.md" = "analyticsreceipts/data/OSSIE-NOTICE.md"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
