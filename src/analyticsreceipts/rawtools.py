@@ -3,9 +3,13 @@
 `describe_tables` shows the warehouse schema; `run_sql` runs one statement on the same hardened
 read-only connection as the server, with the same caps, and emits a receipt on the execution path.
 A raw receipt has no metric_id and no metric version: axis (a) is N/A for this arm.
+
+`run_sql` takes exactly one statement, and only one that starts with SELECT or WITH (after leading comments).
+Absolute file paths are replaced by <path> in error text, so they never reach the model or a replay.
 """
 
 import json
+import re
 
 from . import __version__
 from .execution import make_receipt, now_iso
@@ -19,6 +23,31 @@ TOOL_SPECS = [
      "input_schema": {"type": "object", "properties": {"sql": {"type": "string"}}, "required": ["sql"],
                       "additionalProperties": False}},
 ]
+
+
+_LEADING = re.compile(r"(?:\s+|--[^\n]*(?:\n|$)|/\*.*?\*/)*", re.S)
+_FIRST_WORD = re.compile(r"(?:SELECT|WITH)\b", re.I)
+_PATHS = re.compile(r"(?<![\w.:/~])/(?:[^\s/'\"`<>]+/)+[^\s/'\"`<>,;)]*"   # /abs/path/file
+                    r"|~/(?:[^\s/'\"`<>]+/)*[^\s/'\"`<>,;)]+"            # ~/home/path
+                    r"|\b[A-Za-z]:\\(?:[^\s\\'\"`<>]+\\)*[^\s\\'\"`<>,;)]+")  # C:\windows\path
+
+
+def scrub_paths(text):
+    """Replace absolute and home-relative file paths in error text with <path>."""
+    return _PATHS.sub("<path>", text) if text else text
+
+
+def _refusal(sql, con):
+    """A reason to refuse `sql` up front, or None. Unparseable SQL is not refused: it runs and fails as before."""
+    try:
+        statements = con.extract_statements(sql)
+    except Exception:
+        return None
+    if len(statements) != 1:
+        return f"run_sql takes one statement; got {len(statements)}"
+    if not _FIRST_WORD.match(sql[_LEADING.match(sql).end():]) or statements[0].type.name != "SELECT":
+        return "run_sql runs only a statement that starts with SELECT or WITH"
+    return None
 
 
 class RawTools:
@@ -35,13 +64,17 @@ class RawTools:
         for t, c, ty in rows:
             tables.setdefault(t, []).append({"name": c, "type": ty})
         return {"tables": [{"name": t, "columns": cs} for t, cs in tables.items()],
-                "data_ends": self.ex.snapshot.get("max_invoice_ts"), "error": err}
+                "data_ends": self.ex.snapshot.get("max_invoice_ts"), "error": scrub_paths(err)}
 
     def run_sql(self, sql):
         started = now_iso()
         if not isinstance(sql, str) or not sql.strip():
             return {"result_type": "invalid_request", "reason": "sql must be a non-empty string", "receipt": None}
+        reason = _refusal(sql, self.ex.con)
+        if reason:
+            return {"result_type": "invalid_request", "reason": reason, "receipt": None}
         cols, rows, truncated, err = self.ex.run(sql)
+        err = scrub_paths(err)
         receipt = make_receipt(executor=self.ex, kind="raw_sql", request={"sql": sql}, metric_id=None,
                                metric_def_version=None, semantic_model_sha256=None, sql=sql, params=(),
                                sql_sha256=None, columns=cols, rows=rows, truncated=truncated, error=err,

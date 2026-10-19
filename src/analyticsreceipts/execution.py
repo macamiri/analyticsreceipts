@@ -2,7 +2,8 @@
 
 The connection is opened read-only with external access disabled and the configuration locked, so
 a statement cannot read or write files outside the database (no read_csv, no COPY TO) or loosen
-those settings. Every result is capped by rows and by time.
+those settings. Every result is capped by rows and by time. The same instance is capped in memory, threads
+and temp-file disk use (set before the lock), and at most MAX_CONCURRENT_RUNS statements run at once.
 """
 
 import datetime as dt
@@ -18,16 +19,45 @@ import duckdb
 RECEIPT_VERSION = "2"  # 2: `compiler` required and tied to `kind`; no non_additive_guard check
 ROW_CAP = 1000
 TIMEOUT_S = 20.0
+MEMORY_LIMIT = "1GB"           # per DuckDB instance, shared by every cursor on it
+THREADS = 2
+MAX_TEMP_DIRECTORY_SIZE = "0B"  # no spilling to disk: a query over the memory limit fails instead
+MAX_CONCURRENT_RUNS = 4         # per process; further calls wait (up to their timeout) for a slot
+_RUN_SLOTS = threading.BoundedSemaphore(MAX_CONCURRENT_RUNS)
+_LIMITS = {"memory_limit": f"'{MEMORY_LIMIT}'", "threads": str(THREADS),
+           "max_temp_directory_size": f"'{MAX_TEMP_DIRECTORY_SIZE}'"}
 
 
 def connect(db_path):
     con = duckdb.connect(db_path, read_only=True, config={"enable_external_access": False})
     # a second connection to the same file in one process shares the (already locked) instance
     if not con.execute("SELECT current_setting('lock_configuration')").fetchone()[0]:
+        for name, value in _LIMITS.items():
+            con.execute(f"SET {name} = {value}")
         con.execute("SET lock_configuration = true")
+    if _settings(con) != _expected_settings():
+        raise RuntimeError("this database instance was locked with other resource limits; refusing to serve")
     if con.execute("SELECT current_setting('enable_external_access')").fetchone()[0]:
         raise RuntimeError("external access is enabled on this database instance; refusing to serve")
     return con
+
+
+def _settings(con):
+    return {n: con.execute("SELECT current_setting(?)", [n]).fetchone()[0] for n in _LIMITS}
+
+
+_EXPECTED = []
+
+
+def _expected_settings():
+    # how DuckDB reports the limits (e.g. '1GB' reads back as '953.6 MiB'), from a scratch in-memory instance
+    if not _EXPECTED:
+        scratch = duckdb.connect()
+        for name, value in _LIMITS.items():
+            scratch.execute(f"SET {name} = {value}")
+        _EXPECTED.append(_settings(scratch))
+        scratch.close()
+    return _EXPECTED[0]
 
 
 def _cell(v):
@@ -71,8 +101,17 @@ class Executor:
 
         Each call runs on its own cursor (a separate connection to the same read-only database), and
         the timeout interrupts only that cursor. Concurrent calls (the MCP SDK runs sync tools on worker
-        threads) therefore can neither read each other's results nor cancel each other's queries.
+        threads) therefore can neither read each other's results nor cancel each other's queries. At most
+        MAX_CONCURRENT_RUNS calls run at once; a call that gets no slot within timeout_s returns an error.
         """
+        if not _RUN_SLOTS.acquire(timeout=timeout_s):
+            return [], [], False, f"Busy: {MAX_CONCURRENT_RUNS} queries already running; no slot within {timeout_s} s"
+        try:
+            return self._run(sql, params, cap, timeout_s)
+        finally:
+            _RUN_SLOTS.release()
+
+    def _run(self, sql, params, cap, timeout_s):
         cur = self.con.cursor()
         timer = threading.Timer(timeout_s, cur.interrupt)
         timer.start()

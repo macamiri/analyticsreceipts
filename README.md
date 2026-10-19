@@ -35,7 +35,7 @@ Reproduce it with the commands in the next section; the output is `reports/m1-fi
 ## What is in the box
 
 1. A semantic model of the UCI Online Retail II dataset (CC BY 4.0), written in the Apache Ossie format. It encodes three conventions a naive query gets wrong: the two yearly sheets share an identical nine-day window, some stock codes are fees or adjustments rather than products, and December 2011 ends on the 9th.
-2. A read-only MCP server (stdio, official `mcp` SDK) with five tools: `list_metrics`, `get_metric`, `list_dimensions`, `get_dimension_values` and `query_metric`. It has no raw SQL tool. A request it cannot answer from a governed metric returns a typed refusal (`needs_clarification`, `no_governed_metric` or `invalid_request`). Every `query_metric` result carries a receipt. Concurrent tool calls are safe: each call gets its own database cursor and its own timeout.
+2. A read-only MCP server (stdio, official `mcp` SDK) with five tools: `list_metrics`, `get_metric`, `list_dimensions`, `get_dimension_values` and `query_metric`. It has no raw SQL tool. A request it cannot answer from a governed metric returns a typed refusal (`needs_clarification`, `no_governed_metric` or `invalid_request`). Every `query_metric` result carries a receipt. Concurrent tool calls are safe: each call gets its own database cursor and its own timeout. At most 4 queries run at once, and the read-only database is capped at 1 GB of memory and 2 threads, with no temporary files on disk.
 3. A deterministic grader. No model is used to grade. It scores four axes:
 
 | axis | question it answers |
@@ -47,7 +47,7 @@ Reproduce it with the commands in the next section; the output is `reports/m1-fi
 
 Each answer lands in exactly one cell. The headline cell, `valid_wrong_question`, means the query ran and its result answers a different question: the table does not match, or a trap was sprung. Rule ER-1 in `grader.py` fixes the meaning of every cell and the only two spec equivalences the grader accepts.
 
-4. Two harnesses. `fixtures` replays recorded transcripts with planted failures through the real server, with no model involved. `live` runs a local model through Ollama in two arms: the MCP tools, and plain `describe_tables` plus `run_sql`.
+4. Two harnesses. `fixtures` replays recorded transcripts with planted failures through the real server, with no model involved. `live` runs a local model through Ollama in two arms: the MCP tools, and plain `describe_tables` plus `run_sql`. `run_sql` takes one statement that starts with SELECT or WITH, and file paths in its error messages are replaced by `<path>`.
 
 ## Install and first result (about a minute, no model needed)
 
@@ -72,12 +72,12 @@ Measured on a clean venv on a 16 GB M1 laptop, on battery in low power mode, tim
 |---|---|
 | venv | 2.7 |
 | pip install | 8.8 |
-| download (45.6 MB) | 11.4 |
-| unzip | 0.4 |
-| load | 40.2 |
-| fixtures | 3.3 |
+| download (45.6 MB) | 15.8 |
+| unzip | 0.5 |
+| load | 42.3 |
+| fixtures | 4.0 |
 | report | 0.1 |
-| total | 66.8 |
+| total | 74.1 |
 
 To serve the model to your own MCP client:
 
@@ -94,10 +94,10 @@ From the clone, after the load step above:
 
 ```bash
 export ANALYTICSRECEIPTS_DB=$PWD/retail.duckdb
-pytest -q tests        # 128 passed, 1 skipped (about 8 s)
+pytest -q tests        # 154 passed, 1 skipped (about 10 s)
 ```
 
-The one skip is a test that needs a prompt snapshot kept out of the repository. Without `ANALYTICSRECEIPTS_DB`, the 42 tests that need the warehouse are also skipped (86 passed, 43 skipped), and pytest ends with a red "42 WAREHOUSE TESTS DID NOT RUN" banner instead of a clean pass.
+The one skip is a test that needs a prompt snapshot kept out of the repository. Without `ANALYTICSRECEIPTS_DB`, the 42 tests that need the warehouse are also skipped (112 passed, 43 skipped), and pytest ends with a red "42 WAREHOUSE TESTS DID NOT RUN" banner instead of a clean pass.
 
 ## Receipt format
 
@@ -278,6 +278,7 @@ How the search was done (2026-10-18):
 ## Known limitations
 
 - The gold expected tables are computed by the compiler under test. For 15 of 20 items they are cross-checked against independent hand-written SQL in `tests/test_reference.py`.
+- The `replays/*.resources.log` files are kept as recorded: once a minute during the live runs they logged the time, battery level, power source, free disk space and swap use of the laptop that ran them.
 
 ## How it was built
 
